@@ -43,7 +43,7 @@ function createCharacter(id, name) {
 
 const character = createCharacter("character", "Pikachu");
 const enemy = createCharacter("enemy", "Charmander");
-const enemy2 = createCharacter("enemy2", "Gengar");
+const enemy2 = createCharacter("enemy2", "Meowth");
 
 function addLog(message, type = "neutral") {
   const logs = document.getElementById("logs");
@@ -89,6 +89,25 @@ function Winner() {
   }
   return false;
 }
+
+const clickCounter = (limit = 6) => {
+  let count = 0;
+  return (btn) => {
+    if (count < limit) {
+      count++;
+      const remaining = limit - count;
+      btn.textContent = `Клік ${count} (залишилось ${remaining})`;
+    } else {
+      btn.textContent = `Ліміт ${limit} вичерпано`;
+      btn.disabled = true;
+    }
+  };
+};
+
+document.querySelectorAll("button").forEach(btn => {
+  const handleClick = clickCounter(6);
+  btn.addEventListener("click", () => handleClick(btn));
+});
 
 document.getElementById("dbtn-kick").addEventListener("click", () => {
   character.attack(enemy);

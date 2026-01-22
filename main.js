@@ -1,63 +1,43 @@
-function countLetter(str, letter) {
-  let count = 0;
-  for (let i = 0; i < str.length; i++) {
-    if (str.charAt(i).toLowerCase() === letter.toLowerCase()) {
-      count++;
-    }
-  }
-  return count;
+import { Pokemon } from "./pokemon.js";
+import { checkWinner } from "./result.js";
+import { clickCounter } from "./counter.js";
+
+const logsDiv = document.createElement("div");
+logsDiv.id = "logs";
+document.body.appendChild(logsDiv);
+
+function addLog(message, type = "neutral") {
+  const logs = document.getElementById("logs");
+  const p = document.createElement("p");
+  p.textContent = message;
+
+  if (type === "hero") p.style.color = "lime";
+  else if (type === "enemy") p.style.color = "red";
+  else p.style.color = "white";
+
+  logs.prepend(p);
 }
 
-function getRow(firstRow, secondRow, letter) {
-  const countFirst = countLetter(firstRow, letter);
-  const countSecond = countLetter(secondRow, letter);
+const character = new Pokemon("character", "Pikachu", true);
+const enemy = new Pokemon("enemy", "Charmander");
 
-  if (countFirst > countSecond) {
-    return firstRow;
-  } else {
-    return secondRow;
-  }
-}
+document.querySelectorAll("button").forEach(btn => {
+  const handleClick = clickCounter(6);
+  btn.addEventListener("click", () => handleClick(btn));
+});
 
-function runTask1() {
-  let firstRow = prompt("Введіть перший рядок:");
-  let secondRow = prompt("Введіть другий рядок:");
-  let userLetter = prompt("Введіть літеру для пошуку:");
+document.getElementById("dbtn-kick").addEventListener("click", () => {
+  character.attack(enemy, addLog);
+  enemy.attack(character, addLog);
+  if (checkWinner(character, enemy, addLog)) return;
+});
 
-  if (firstRow && secondRow && userLetter) {
-    let result = getRow(firstRow, secondRow, userLetter);
-    alert("Рядок з більшою кількістю літер '" + userLetter + "':\n" + result);
-  }
-}
+document.getElementById("kbtn-kick").addEventListener("click", () => {
+  character.attack(enemy, addLog, 10, 25);
+  enemy.attack(character, addLog, 5, 15);
+  if (checkWinner(character, enemy, addLog)) return;
+});
 
-function formattedPhone(phone) {
-  phone = phone.replace(/\D/g, "");
-
-  if (phone.length === 12 && phone.startsWith("380")) {
-    phone = "+" + phone;
-  } else if (phone.length === 11 && phone.startsWith("80")) {
-    phone = "+3" + phone;
-  } else if (phone.length === 10 && phone.startsWith("0")) {
-    phone = "+38" + phone;
-  } else if (phone.length === 13 && phone.startsWith("380")) {
-    phone = "+" + phone; 
-  } else {
-    return "Невірний формат!";
-  }
-
-  let country = phone.slice(0, 3);   
-  let operator = phone.slice(3, 6);  
-  let part1 = phone.slice(6, 9);    
-  let part2 = phone.slice(9, 11);    
-  let part3 = phone.slice(11);       
-
-  return `${country} (${operator}) ${part1}-${part2}-${part3}`;
-}
-
-function runTask2() {
-  let userPhone = prompt("Введіть номер телефону:");
-  if (userPhone) {
-    let result = formattedPhone(userPhone);
-    alert(result);
-  }
-}
+document.getElementById("Restart_Button").addEventListener("click", () => {
+  location.reload();
+});

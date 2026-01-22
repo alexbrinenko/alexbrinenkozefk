@@ -521,27 +521,64 @@ h1 {
 }
 
 #logs {
-  width: 80%;
-  height: 180px;
-  margin: 25px auto;
-  background: linear-gradient(145deg, #2b1b4d, #1c0e35);
-  border: 3px solid #ffcb05;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(255, 203, 5, 0.4);
-  padding: 12px;
-  font-family: 'Comic Sans MS', 'Fredoka One', cursive;
-  font-size: 15px;
-  line-height: 1.4;
+  width: 70%;
+  height: 200px;
+  margin: 30px auto 0;
+  background: linear-gradient(160deg, #0a192f, #102542);
+  border: 2px solid #38bdf8;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.5), 0 0 25px rgba(0, 255, 255, 0.15);
+  padding: 15px 18px;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
-  flex-direction: column;
-  color: #fff;
+  flex-direction: column-reverse; /* теперь последние логи вверху */
+  color: #e0f2fe;
+  backdrop-filter: blur(8px);
   scrollbar-width: thin;
-  scrollbar-color: #ffcb05 #1c0e35;
+  scrollbar-color: #38bdf8 #0a192f;
+}
+
+/* Цвета для разных типов логов */
+#logs p {
+  margin: 3px 0;
+  padding: 4px 6px;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+#logs p.hero {
+  color: #34d399;
+  border-color: #34d399;
+  background: rgba(52, 211, 153, 0.1);
+}
+
+#logs p.enemy {
+  color: #f87171;
+  border-color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+#logs p.neutral {
+  color: #93c5fd;
+  border-color: #93c5fd;
+  background: rgba(147, 197, 253, 0.1);
+}
+
+/* Скроллбар */
+#logs::-webkit-scrollbar {
+  width: 8px;
+}
+
+#logs::-webkit-scrollbar-thumb {
+  background: #38bdf8;
+  border-radius: 10px;
 }
 
 #logs::-webkit-scrollbar-track {
-  background: #1c0e35;
-  border-radius: 10px;
+  background: #0a192f;
 }

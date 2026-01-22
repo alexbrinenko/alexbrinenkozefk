@@ -1,72 +1,107 @@
-class Pokemon {
-    constructor(name, hp, healthId, barId) {
-        this.name = name;
-        this.hp = hp;
-        this.maxHp = hp;
-        this.elementHP = document.getElementById(healthId);
-        this.elementBar = document.getElementById(barId);
-    }
+const logsDiv = document.createElement("div");
+logsDiv.id = "logs";
+document.body.appendChild(logsDiv); 
 
-    updateHp() {
-        this.elementBar.style.width = (this.hp / this.maxHp * 100) + "%";
-        this.elementHP.textContent = `${this.hp} / ${this.maxHp}`;
+function createCharacter(id, name) {
+  const elementHP = document.getElementById(`health-${id}`);
+  const elementBar = document.getElementById(`progressbar-${id}`);
+  const maxHp = 100;
 
-        if (this.hp > 75) {
-            this.elementBar.style.background = "lime";
-        } else if (this.hp > 50) {
-            this.elementBar.style.background = "yellow";
-        } else if (this.hp > 20) {
-            this.elementBar.style.background = "orange";
-        } else {
-            this.elementBar.style.background = "red";
-        }
-    }
+  function updateHp() {
+    const { hp, elementHP, elementBar } = this;
+    elementBar.style.width = (hp / maxHp * 100) + "%";
+    elementHP.textContent = `${hp} / ${maxHp}`;
+    elementBar.style.background =
+      hp > 75 ? "lime" :
+      hp > 50 ? "yellow" :
+      hp > 20 ? "orange" : "red";
+  }
 
-    attack(defender, minDamage = 2, maxDamage = 15) {
-        const damage = Math.floor(Math.random() * (maxDamage - minDamage + 1)) + minDamage;
-        defender.hp = Math.max(0, defender.hp - damage);
-        defender.updateHp();
-        console.log(`${this.name} атакує ${defender.name} на ${damage} урона!`);
-    }
+  function attack(defender, minDamage = 2, maxDamage = 15) {
+    const { name: attackerName } = this;
+    const { name: defenderName } = defender;
+    const damage = Math.floor(Math.random() * (maxDamage - minDamage + 1)) + minDamage;
+    defender.hp = Math.max(0, defender.hp - damage);
+    defender.updateHp();
+
+    const logText = `${attackerName} атакує ${defenderName} на ${damage} урона! ${defenderName} має ${defender.hp} HP.`;
+
+    const type = this === character ? "hero" : "enemy";
+    addLog(logText, type);
+  }
+
+  return {
+    name,
+    hp: maxHp,
+    maxHp,
+    elementHP,
+    elementBar,
+    updateHp,
+    attack,
+  };
 }
 
-const character = new Pokemon("Pikachu", 100, "health-character", "progressbar-character");
-const enemy = new Pokemon("Charmander", 100, "health-enemy", "progressbar-enemy");
-const enemy2 = new Pokemon("Gengar", 100, "health-enemy2", "progressbar-enemy2");
+const character = createCharacter("character", "Pikachu");
+const enemy = createCharacter("enemy", "Charmander");
+const enemy2 = createCharacter("enemy2", "Gengar");
+
+function addLog(message, type = "neutral") {
+  const logs = document.getElementById("logs");
+  const p = document.createElement("p");
+  p.textContent = message;
+
+  if (type === "hero") {
+    p.style.color = "lime";
+  } else if (type === "enemy") {
+    p.style.color = "red";
+  } else {
+    p.style.color = "white";
+  }
+
+  logs.prepend(p);
+}
 
 function showResult(message) {
-    const screen = document.getElementById("Result_Window");
-    const text = document.getElementById("Result_Text");
-    text.textContent = message;
-    screen.style.display = "flex";
+  const screen = document.getElementById("Result_Window");
+  const text = document.getElementById("Result_Text");
+  text.textContent = message;
+  screen.style.display = "flex";
 }
 
 function Winner() {
-    if (character.hp === 0 && enemy.hp === 0) {
-        showResult("Нічия!");
-        return true;
-    }
-    if (character.hp === 0) {
-        showResult(`🎉 ${enemy.name} Переміг! 🎉`);
-        return true;
-    }
-    if (enemy.hp === 0) {
-        showResult(`🎉 ${character.name} Переміг! 🎉`);
-        return true;
-    }
-    return false;
+  const { hp: chHp, name: chName } = character;
+  const { hp: enHp, name: enName } = enemy;
+
+  if (chHp === 0 && enHp === 0) {
+    showResult("Нічия!");
+    addLog("Нічия!");
+    return true;
+  }
+  if (chHp === 0) {
+    showResult(`🎉 ${enName} Переміг! 🎉`);
+    addLog(`${enName} виграв бій!`);
+    return true;
+  }
+  if (enHp === 0) {
+    showResult(`🎉 ${chName} Переміг! 🎉`);
+    addLog(`${chName} виграв бій!`);
+    return true;
+  }
+  return false;
 }
 
 document.getElementById("dbtn-kick").addEventListener("click", () => {
-    character.attack(enemy);
-    enemy.attack(character);
-    if (Winner()) return;
+  character.attack(enemy);
+  enemy.attack(character);
+  if (Winner()) return;
 });
 
 document.getElementById("kbtn-kick").addEventListener("click", () => {
-    character.attack(enemy, 10, 25);
-    enemy.attack(character, 5, 15);
-    if (Winner()) return;
+  character.attack(enemy, 10, 25);
+  enemy.attack(character, 5, 15);
+  if (Winner()) return;
 });
 
-document.getElementById("Restart_Button").addEventListener("click", () => location.reload());
+document.getElementById("Restart_Button").addEventListener("click", () => {
+  location.reload();
+});
